@@ -21,8 +21,8 @@ namespace StoreFront.DATA.EF.Models
         public string ProductQuality { get; set; } = null!;
         public string? ProductImage { get; set; }
 
-        public virtual Category Category { get; set; } = null!;
-        public virtual StockStatus Status { get; set; } = null!;
+        public virtual Category? Category { get; set; }
+        public virtual StockStatus? Status { get; set; }
         public virtual ICollection<OrderProduct> OrderProducts { get; set; }
 
         public virtual ICollection<Color> Painteds { get; set; }

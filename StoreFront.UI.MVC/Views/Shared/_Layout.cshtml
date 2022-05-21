@@ -12,7 +12,7 @@
   <meta name="description" content="" />
   <meta name="author" content="" />
 
-  <title>Fior</title>
+  <title>Rocket League Item Shop</title>
 
   <!-- slider stylesheet -->
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css" />
@@ -23,21 +23,24 @@
   <!-- fonts style -->
   <link href="https://fonts.googleapis.com/css?family=Baloo+Chettan|Poppins:400,600,700&display=swap" rel="stylesheet">
   <!-- Custom styles for this template -->
-  <link href="css/style.css" rel="stylesheet" />
+  <link href="~/css/style.css" rel="stylesheet" />
   <!-- responsive style -->
-  <link href="css/responsive.css" rel="stylesheet" />
+  <link href="~/css/responsive.css" rel="stylesheet" />
+
+  <!-- Custom CSS -->
+  <link href="~/css/stylesheet.css" rel="stylesheet" />
 </head>
 
 <body>
 
   <div class="hero_area">
-    <!-- header section strats -->
+    <!-- header section starts -->
     <header class="header_section">
       <div class="container">
         <nav class="navbar navbar-expand-lg custom_nav-container ">
-          <a class="navbar-brand" href="index.html">
+          <a class="navbar-brand" href="@Url.Action("Index", "Home")">
             <span>
-              Fior
+              Rocket League Item Shop
             </span>
           </a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +51,7 @@
             <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
               <ul class="navbar-nav  ">
                 <li class="nav-item active">
-                  <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+                  <a class="nav-link" href="@Url.Action("Index", "Home")">Home <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="about.html"> About</a>
@@ -75,10 +78,12 @@
           </div>
         </nav>
       </div>
+      @RenderBody()
     </header>
+    </div>
     <!-- end header section -->
     
-    @RenderBody()
+  
 
      <!-- info section -->
   <section class="info_section layout_padding">
@@ -87,10 +92,10 @@
         <div class="col-md-3">
           <div class="info_logo">
             <h5>
-              Fior
+              Rocket League Item Shop
             </h5>
             <p>
-              There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration
+              Top Items Seller Site <br /><br />Best experience for online shopping of RL products with great prices!
             </p>
           </div>
         </div>
@@ -101,7 +106,7 @@
             </h5>
             <ul>
               <li class="active">
-                <a href="index.html">
+                <a href="@Url.Action("Index", "Home")">
                   Home
                 </a>
               </li>
@@ -216,6 +221,8 @@
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap">
   </script>
   <!-- End Google Map -->
+
+      @await RenderSectionAsync("Scripts", false)
 
 </body>
 

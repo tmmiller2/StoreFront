@@ -1,0 +1,12 @@
+﻿/* Custom CSS */
+.hero_area {
+    background-color: rgba(255, 255, 255, .5)
+}
+
+.carousel-inner {
+    min-height: 50vh;
+}
+
+.table {
+    background-color: rgba(255, 255, 255, .7)
+}

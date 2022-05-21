@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StoreFront.DATA.EF.Metadata
+namespace StoreFront.DATA.EF.Models
 {
     //internal class Metadata
     //{
@@ -86,6 +86,7 @@ namespace StoreFront.DATA.EF.Metadata
 
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:c}")]
         [Display(Name = "Price")]
+        [Range(0, (double)decimal.MaxValue)]
         [Required]
         public decimal ProductPrice { get; set; }
 

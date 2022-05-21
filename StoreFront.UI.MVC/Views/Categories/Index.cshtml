@@ -1,14 +1,21 @@
 ﻿@model IEnumerable<StoreFront.DATA.EF.Models.Category>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Categories";
 }
 
-<h1>Index</h1>
-
+@section Slider{
+<h1>@ViewData["Title"]</h1>
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<!-- slider section -->
+<section class=" slider_section position-relative">
+    <div class="slider_number-container ">
+        <div class="number-box">
+        </div>
+    </div>
+
 <table class="table">
     <thead>
         <tr>
@@ -39,3 +46,6 @@
 }
     </tbody>
 </table>
+
+</section>
+}
