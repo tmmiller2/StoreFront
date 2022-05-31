@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,17 +13,30 @@ namespace StoreFront.UI.MVC.Controllers
     public class OrdersController : Controller
     {
         private readonly StoreFrontContext _context;
+        private UserManager<IdentityUser> _userManager;
 
-        public OrdersController(StoreFrontContext context)
+        public OrdersController(StoreFrontContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            var storeFrontContext = _context.Orders.Include(o => o.User);
-            return View(await storeFrontContext.ToListAsync());
+            if (User.IsInRole("Admin"))
+            {
+                var orders = _context.Orders.Include(o => o.User);
+                return View(await orders.ToListAsync());
+            }
+            else
+            {
+                string userId = (await _userManager.GetUserAsync(HttpContext.User))?.Id;
+                var orders = _context.Orders.Where(x => x.UserId == userId)
+                    .Include(o => o.User);
+
+                return View(await orders.ToListAsync());
+            }
         }
 
         // GET: Orders/Details/5
@@ -47,7 +61,7 @@ namespace StoreFront.UI.MVC.Controllers
         // GET: Orders/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.UserDetails, "UserId", "UserId");
+            ViewData["UserId"] = new SelectList(_context.UserDetails, "UserId", "FullName");
             return View();
         }
 

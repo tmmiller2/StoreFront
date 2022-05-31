@@ -1,0 +1,72 @@
+﻿@model IEnumerable<StoreFront.DATA.EF.Models.Product>
+
+@{
+    ViewData["Title"] = "Shop Items";
+}
+
+
+
+<!-- product section -->
+<section class="product_section layout_padding">
+    <div class="container">
+        <div>
+            <h2 class="text-center font-weight-bold">
+                Shop Items
+            </h2>
+        </div>
+
+        <p align="center">
+            @if (User.IsInRole("Admin"))
+            {
+                <span>
+                    <a asp-action="Create">Add New Product</a> |
+                </span>
+            }
+            <a asp-action="Index">Table View</a>
+        </p>
+        <section class="row"
+        <div class="container">
+
+                @foreach (var item in Model)
+                {
+                    <div class="col-sm-6 col-md-4 col-lg-4">
+                        <div class="box">
+                            <div class="option_container">
+                                <div class="options">
+                                    <a asp-action="Details" asp-route-id="@item.ProductId" class="option1">
+                                        @item.ProductName
+                                    </a>
+                                    <a asp-action="AddtoCart" asp-controller="ShoppingCart" asp-route-id="@item.ProductId" class="option2">
+                                        &emsp;Add To Cart
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="img-box">
+                                <img src="~/images/t_@item.ProductImage" alt="@item.ProductDescription">
+                            </div>
+                            <div class="detail-box">
+                                <h5>
+                                    @item.ProductName
+                                </h5>
+                                <h6>
+                                    @Html.DisplayFor(modelItem => item.ProductPrice)
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+
+
+        </div>
+        </section>
+
+        <div class="btn-box text-center mb-5">
+            <br />
+            <a href="@Url.Action("Index", "Products")">
+                View All Items
+            </a>
+        </div>
+    </div>
+</section>
+<!-- end product section -->

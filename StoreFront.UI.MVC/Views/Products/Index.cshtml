@@ -3,12 +3,18 @@
 @{
     ViewData["Title"] = "Shop Products";
 }
+<section class="product_section layout_padding">
+<h1 class="text-center font-weight-bold">Items</h1>
 
-<h1>Products</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<p align="center">
+                @if (User.IsInRole("Admin"))
+                {
+                    <span>
+                        <a asp-action="Create">Add New Item</a> |
+                    </span>
+                }
+                <a asp-action="TiledProducts">Tile View</a>
+            </p>
 <table class="table">
     <thead>
         <tr>
@@ -58,7 +64,8 @@
                 @Html.DisplayFor(modelItem => item.ProductQuality)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ProductImage)
+                @*@Html.DisplayFor(modelItem => item.ProductImage)*@
+                <img src="~/images/t_@item.ProductImage" class="img-fluid" alt="@item.ProductDescription" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Category.CategoryName)
@@ -66,12 +73,36 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Status.StatusName)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ProductId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ProductId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ProductId">Delete</a>
-            </td>
+                        <td>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <span>
+                                    <a asp-action="Edit" asp-route-id="@item.ProductId">Edit</a> |
+                                </span>
+                            }
+                            <a asp-action="Details" asp-route-id="@item.ProductId">Details</a>
+
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                @if (item.OrderProducts.Count() == 0)
+                                {
+                                    <span>|</span>
+                                    <a asp-action="Delete" asp-route-id="@item.ProductId">Delete</a>
+                                }
+                                else
+                                {
+                                    <span>|</span>
+                                    <a disabled="disabled" class="text-danger text-decoration-line-through"
+                           title="Cannot delete this Gadget as it is referenced by an Order">
+                                        Delete
+                                    </a>
+                                }
+                            }
+
+                        </td>
         </tr>
 }
     </tbody>
 </table>
+</section>

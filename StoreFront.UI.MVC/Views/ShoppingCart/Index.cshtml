@@ -1,0 +1,103 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Cart";
+    decimal? cartTotal = 0;
+}
+
+<h1 class="text-center">Your Cart</h1>
+
+<div class="container">
+    <p align="center">
+    <a asp-action="Index" asp-controller="Products" class="btn btn-info">
+        Back to Shopping
+    </a>
+</p>
+    @if (Model.Count == 0)
+        {
+            <p class="alert alert-warning text-center">
+                @ViewBag.Message
+            </p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img src="~/images/t_@item.Value.Product.ProductImage" alt="!item.Value.Product.ProductName" />
+                            </td>
+                            <td>
+                                <form asp-action="UpdateCart">
+                                    <input type="hidden" name="productId" value="@item.Key" />
+                                    <input type="text" name="qty" value=@item.Value.Qty class="form-control d-block mx-auto text-center w-50" />
+                                    <input type="submit" value="Update Cart" class="btn btn-primary btn-sm" />
+                                </form>
+                            </td>
+                            <td>
+                                @item.Value.Product.ProductName
+                            </td>
+                            <td>
+                                @string.Format($"{item.Value.Product.ProductPrice:c}")
+                                @*@item.Value.Product.ProductPrice*@
+                            </td>
+                            <td>
+                                @{
+                                    //Calculate the line total and the cart total
+                                    //line total will be displayed here for each individual line item
+                                    //cart total will be displayed after all of the line items
+                                    decimal? lineTotal = item.Value.Qty * item.Value.Product.ProductPrice;//total for 1 line item
+                                    cartTotal += lineTotal;//total for ALL items
+                                }
+
+                                @string.Format($"{lineTotal:c}")
+                                @*@lineTotal*@
+                            </td>
+                            <td>
+                                <a asp-controller="ShoppingCart" asp-action="RemoveFromCart" asp-route-id="@item.Key"
+                           class="btn btn-danger">
+                                    Remove From Cart
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="alert alert-success text-center">
+                <p>
+                    Your total before taxes and shipping is @string.Format($"{cartTotal:c}").
+                </p>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <p>
+                        <a asp-action="SubmitOrder" class="btn btn-primary">Submit Order</a>
+                    </p>
+                }
+                else
+                {
+                    <p>
+                        To place this order, you must be logged in.
+                    </p>
+                    <button disabled="disabled" class="btn btn-primary">Submit Order</button>
+                }
+
+            </div>
+        }
+
+</div>

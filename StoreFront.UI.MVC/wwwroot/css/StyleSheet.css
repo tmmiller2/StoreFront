@@ -7,6 +7,70 @@
     min-height: 50vh;
 }
 
+/*products table background*/
 .table {
     background-color: rgba(255, 255, 255, .7)
+}
+
+ul, li{
+    list-style-type: none;
+}
+
+/*header section*/
+.hero_area {
+    min-height: 100vh;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    position: relative;
+    background-image: url(../images/background.jpg);
+    background-size: cover;
+    background-position: top right;
+}
+
+.custom_nav-container.navbar-expand-lg .navbar-nav .nav-link {
+    padding: 10px 30px;
+    color: #ffffff;
+    text-align: center;
+}
+
+.nav-link {
+    padding: 10px 30px;
+    color: #ffffff;
+    text-align: center;
+}
+
+.navbar-expand-lg, .navbar-nav, .nav-link {
+    color: #ffffff
+}
+
+.slider_section .detail_box h1 {
+    font-weight: 600;
+    color: black;
+    font-size: 5rem;
+    margin-bottom: 30px;
+}
+
+.slider_section .detail_box h2 {
+    margin-bottom: 0;
+}
+
+.slider_section .detail_box h2 {
+    margin-bottom: 0;
+    font-weight: 350;
+    color: black;
+}
+
+.slider_section .detail_box a:hover {
+    background-color: #ffffff;
+    color: #0d0806;
+}
+
+/*tile products table background*/
+section {
+    background-color: rgba(255, 255, 255, .5);
 }
