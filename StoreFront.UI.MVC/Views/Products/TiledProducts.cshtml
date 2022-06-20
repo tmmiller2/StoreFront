@@ -1,4 +1,7 @@
-﻿@model IEnumerable<StoreFront.DATA.EF.Models.Product>
+﻿@*@model IEnumerable<StoreFront.DATA.EF.Models.Product>*@
+@model IPagedList<StoreFront.DATA.EF.Models.Product>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
 
 @{
     ViewData["Title"] = "Shop Items";
@@ -9,61 +12,110 @@
 <!-- product section -->
 <section class="product_section layout_padding">
     <div class="container">
-        <div>
-            <h2 class="text-center font-weight-bold">
-                Shop Items
-            </h2>
-        </div>
+            <h1 class="text-center font-weight-bold">@ViewData["Title"]</h1>
 
         <p align="center">
             @if (User.IsInRole("Admin"))
             {
                 <span>
-                    <a asp-action="Create">Add New Product</a> |
+                    <a asp-action="Create">Add New Gadget</a> |
+                    <a asp-action="Discontinued">Discontinued Gadgets</a> |
                 </span>
             }
             <a asp-action="Index">Table View</a>
         </p>
-        <section class="row"
-        <div class="container">
 
-                @foreach (var item in Model)
+        <div class="row">
+
+            @*
+                Search - Step 1
+                - add the <form>
+                - add the <input> textbox
+                - add the <input> submit
+            *@
+
+            <div class="offset-3 col-sm-6">
+                <form asp-action="TiledProducts" method="get">
+                    @*
+                        method="get -> appends the key/value pairs from a form onto the query string in our URL
+                        ? in the URL indicates the beginning of a query string
+                        - everything after the ? is a key/value pair 
+                        ?searchTerm=WhateverIsSearchedFor
+                        - multiple key/value pairs are seperated with an &
+                        ?searchTerm=whatevs&category=tool
+                        These keys/values are passed to the action as arguments for the action's parameters.
+                        public IActionResult TiledProducts(string searchTerm, string category)
+                    *@
+                    @*
+                        Category Dropdown List (DDL) - Step 4
+                        - add the <select> element
+                    *@
+                    <label for="categoryId" class="control-label d-block text-center">Filter By Category</label>
+                    <select name="categoryId" class="form-control text-center mb-3" asp-items="ViewBag.CategoryId">
+                        <option value="0">[Choose a Category]</option>
+                    </select>
+
+                    <input name="searchTerm" class="form-control" />
+
+                    <input type="submit" value="Apply Filters" class="btn btn-primary text-center w-50 d-block" />
+
+                </form>
+
+                @if(ViewBag.NbrResults != null)
                 {
-                    <div class="col-sm-6 col-md-4 col-lg-4">
-                        <div class="box">
-                            <div class="option_container">
-                                <div class="options">
-                                    <a asp-action="Details" asp-route-id="@item.ProductId" class="option1">
-                                        @item.ProductName
-                                    </a>
-                                    <a asp-action="AddtoCart" asp-controller="ShoppingCart" asp-route-id="@item.ProductId" class="option2">
-                                        &emsp;Add To Cart
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="img-box">
-                                <img src="~/images/t_@item.ProductImage" alt="@item.ProductDescription">
-                            </div>
-                            <div class="detail-box">
-                                <h5>
-                                    @item.ProductName
-                                </h5>
-                                <h6>
-                                    @Html.DisplayFor(modelItem => item.ProductPrice)
-                                </h6>
-                            </div>
-                        </div>
-                    </div>
-
+                    <p class="mt-5 p-2 alert-warning text-center">
+                        Showing @ViewBag.NbrResults result@(ViewBag.NbrResults>1 ? "s" : "") for '@ViewBag.SearchTerm'...
+                    </p>
                 }
 
+            </div>
 
+            @foreach (var item in Model)
+            {
+                <div class="col-sm-6 col-md-4 col-lg-4">
+                    <div class="box">
+                        <div class="option_container">
+                            <div class="options">
+                                <a asp-action="Details" asp-route-id="@item.ProductId" class="option1">
+                                    @item.ProductName
+                                </a>
+                                <a asp-action="AddtoCart" asp-controller="ShoppingCart" asp-route-id="@item.ProductId" class="option2">
+                                    &emsp;Add To Cart
+                                </a>
+                            </div>
+                        </div>
+                        <div class="img-box">
+                            <img src="~/images/t_@item.ProductImage" alt="@item.ProductDescription">
+                        </div>
+                        <div class="detail-box">
+                            <h5>
+                                @item.ProductName
+                            </h5>
+                            <h6>
+                                @Html.DisplayFor(modelItem => item.ProductPrice)
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+
+            }
         </div>
-        </section>
 
-        <div class="btn-box text-center mb-5">
-            <br />
-            <a href="@Url.Action("Index", "Products")">
+        @*
+            PagedList - Step 11
+        *@
+        <div class="row mt-5">
+            <div class="w-50 mx-auto text-center">
+                Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                <div class="w-100">
+                @Html.PagedListPager(Model, page => Url.Action("TiledProducts", new {page, searchTerm = ViewBag.SearchTerm, categoryId = ViewBag.Category}))
+                </div>
+            </div>
+        </div>
+
+
+        <div class="btn-box">
+            <a asp-action="TiledProducts">
                 View All Items
             </a>
         </div>

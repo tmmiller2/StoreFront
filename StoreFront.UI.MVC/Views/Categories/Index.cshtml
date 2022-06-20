@@ -4,10 +4,12 @@
     ViewData["Title"] = "Categories";
 }
 
-<h1>@ViewData["Title"]</h1>
-<p>
-    <a asp-action="Create">Add New Category</a>
-</p>
+<h1 class="text-center font-weight-bold">@ViewData["Title"]</h1>
+<div class="row">
+    <div class="offset-3 col-md-6" align="center">
+        <button id="ToggleCategoryCreate" class="btn btn-primary">Add New Category</button>
+    </div>
+</div>
 <!-- slider section -->
 <section class=" slider_section position-relative">
     <div class="slider_number-container ">
@@ -15,7 +17,20 @@
         </div>
     </div>
 
-<table class="table">
+<div id="CategoryCreate">
+    @*This partial will hold the create form to instantiate a new Category object
+        when the form is submitted. To allow that, we pass the new Category() model to the view.
+    *@
+    <partial name="CategoryCreate" model="new StoreFront.DATA.EF.Models.Category()" />
+</div>
+
+
+@*
+    AJAX Step 3 - Add ID to the <table>
+*@
+
+
+<table class="table" id="CategoriesTable">
     <thead>
         <tr>
             <th>
@@ -28,21 +43,226 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CategoryName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CategoryDescription)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.CategoryId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CategoryId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CategoryId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            @*
+                AJAX Step 4 - Add an ID in the <tr> directly inside the <tbody>
+            *@
+            <tr id="Category-@item.CategoryId">
+                <td>
+                    @Html.DisplayFor(modelItem => item.CategoryName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CategoryDescription)
+                </td>
+                <td>
+
+                    @*
+                        AJAX Step 22 - replace edit link with no-href link
+                        <a asp-action="Edit" asp-route-id="@item.CategoryId">Edit</a> |
+                    *@
+                    <a href="" class="EditLink" id="@item.CategoryId">Edit</a>
+
+                    @*
+                        AJAX Step 12 - replace details link w/ ajax details button
+                    *@
+                    @*<a asp-action="Details" asp-route-id="@item.CategoryId">Details</a> |*@
+                    <a href="" class="DetailsLink" id="@item.CategoryId">Details</a> |
+
+                    @*
+                        AJAX Step 5 - replace the delete button with the AJAX delete
+                    *@
+                    @*<a asp-action="Delete" asp-route-id="@item.CategoryId">Delete</a>*@
+                    <a data-ajax="true" data-ajax-confirm="Are you sure you want to delete @item.CategoryName?"
+                   data-ajax-failure="deleteFailed" data-ajax-success="deleteConfirmed" data-ajax-method="POST"
+                   href="~/Categories/AjaxDelete/@item.CategoryId">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@*
+    AJAX Step 13 - create a placeholder div for the details popup content
+*@
+<div id="CategoryDetails"></div>
+
+@*
+    AJAX Step 6 - add section Scripts
+*@
+@section Scripts{
+<script>
+        //*************** AJAX DELETE *****************/
+        //AJAX Step 7 - code the deleteConfirmed() & deleteFailed()
+        function deleteConfirmed(response, status, data){
+            //remove the row from the table
+            let rowId = "#Category-" + response.id;
+            console.log(rowId);
+            $("#CategoriesTable").find(rowId).remove();
+
+            //display status message
+            $("#MessageContent").html("<div class='alert alert-success'>" + response.message + "</div>");
+        }
+
+        function deleteFailed(response, status, data){
+            //display status message
+            $("#MessageContent").html("<div class='alert alert-danger'>Delete unsuccessful.</div>");
+        }
+
+        //*************** AJAX DETAILS ****************/
+        //AJAX Step 14 - show the dialog when we click the a.Details.Link
+        $("a.DetailsLink").on("click", function(e){
+            e.preventDefault();//prevents the <a> from trying to navigate
+
+            //display the dialog box w/ details partial view
+            $("#CategoryDetails").data('cId', $(this).attr('id'))
+                .dialog({
+                    width: 400,
+                    height: 200,
+                    open: function(){
+                        let catId = $(this).data('cId');
+                        $(this).load('/Categories/CategoryDetails/' + catId);
+                    },
+                    title: "Category Details",
+                    modal: true,
+                    resizable: false
+                });
+        });
+             function appendLink(id){
+             $("#CategoryDetails").data('cId', id)
+            .dialog({
+                width: 400,
+                height: 200,
+                open: function(){
+                    let catId = $(this).data('cId');
+                    $(this).load('/Categories/CategoryDetails/' + catId);
+                },
+                title: "Category Details",
+                modal: true,
+                resizable: false
+            });
+    }
+
+
+
+        //***************** AJAX CREATE **********************/
+        //AJAX STEP 18 - show the create form
+        $("#CategoryCreate").hide();//when the page loads, the create form is hidden
+        $("#ToggleCategoryCreate").on("click", function(){
+            $("#CategoryCreate").toggle();
+        });
+
+        //AJAX Step 19 - code ajax create submit function
+        //Summary: when the form is submitted, we serialize the data and then send JSON to the Controller.
+        //MessageContent will display any updates for the user
+        //jQuery AJAX will:
+        // - call the POST AjaxCreate() from the Categories controller
+        // - pass kson date from the form
+        // - on failure, will notify the user of error
+        // - on success, will notify the user, reset the form, insert the new row into the table on the page
+        $("#CategoryCreateForm").on("submit", function(e){
+            e.preventDefault();
+            let formData = $(this).serializeArray();
+            console.log(formData);
+
+
+            $.ajax({
+                url: "/Categories/AjaxCreate",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                error: function(e){
+                    $("#MessageContent").html("<div class='alert alert-danger'>There was a problem!,/div>");
+                },
+                success: function(category){
+                    $("#MessageContent").html("<div class'alert alert-success'>Category added!</div>");
+                    $("#CategoryCreateForm")[0].reset();
+                    $(function(){
+                        let row = '<tr id="Category-' + category.categoryId + '"><td>' + category.categoryName
+                        + '</td><td>' + category.categoryDescription
+                        + '</td><td><a href="javascript:void(0)" onclick="appendLink(' + category.categoryId
+                        + ')" class="DetailsLink" id="' + category.categoryId
+                        + '">Details</a></td></tr>';
+
+
+                        //let row = '<tr><td>' + category.categoryName
+                        //+ '</td><td>' +category.categoryDescription
+                        //+ '</td></tr>';
+                        $("#CategoriesTable").append(row);
+                        $("#CategoryCreate").hide();
+                    });//end function
+                }//end success
+
+            });//end .ajax
+
+
+        });//end submit
+
+
+
+        //*************** AJAX EDIT *****************/
+        //AJAX Step 23 - code the AJAX update
+        let originalContent = null;
+        $("a.EditLink").on("click", function(e){
+            e.preventDefault();
+            let categoryId = $(this).attr("id");
+
+            let row = $("#Category-" + categoryId).children();
+
+            originalContent = {
+                CatId: categoryId,
+                CatName: row[0].innerText,
+                categoryDescription: row[1].innerText
+            };
+
+            //console.log(originalContent);
+
+            $.get("/Categories/CategoryEdit/" + categoryId, function(data){
+                $("#Category-" + categoryId).replaceWith("<tr id='Category-" + categoryId + "'>" + data + "</tr>");
+            })
+
+        });
+
+
+        $(document).on("click", "#saveUpdate", function(){
+        let formData = $("#CategoryEditForm").serializeArray();
+        console.log(formData);
+        $("#MessageContent").html("<div class='alert alert-info'>Please wait...</div>");
+
+        $.ajax({
+            url: "/Categories/AjaxEdit",
+            type: "POST",
+            data: formData,
+            dataType: "json",
+            success: function(data){
+                $("#MessageContent").html("<div class='alert alert-success'>Your record was successfully updated!</div>");
+                $("#CategoryEditForm")[0].reset();
+
+                $(function(){
+                    let row = '<tr><td>' + data.categoryName +
+                    '</td><td>' + data.categoryDescription +
+                    '</td><td>Refresh to view options</td></tr>';
+
+                    $("#Category-" + data.categoryId).replaceWith(row);
+                })
+            },
+            error: function(e){
+                $("#MessageContent").html("<div class='alert alert-warning'>There was an error.  Please try again or contact the site admin.</div>");
+                $(function(){
+                    let row = '<tr><td>' + originalContent.CatName +
+                    '</td><td>' + originalContent.CatDescription +
+                    '</td><td>Refresh to view options</td></tr>';
+                    $("#Category-" + data.categoryId).replaceWith(row);
+                });
+
+            }
+        });
+    });
+
+
+
+</script>
+}
 </section>

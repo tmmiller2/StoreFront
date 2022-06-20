@@ -1,0 +1,87 @@
+﻿@*
+    This is a model declaration. Each View can only have ONE model tied to it.
+    The model declaration endures this View knows how to display and send info
+    using the provided model.
+*@
+
+@model StoreFront.UI.MVC.Models.ContactViewModel
+
+@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<!-- ======= Main ======= -->
+<main id="main">
+
+
+    <!-- ======= Contact Section ======= -->
+    <section class="contact" data-aos="fade-up" data-aos-easing="ease-in-out" data-aos-duration="500">
+        
+
+            <div class="section-title">
+                <h2 class="text-center font-weight-bold">@ViewData["Title"]</h2>
+                <p class="text-center">
+                    Feel free to fill out the form below if you wish to send us an email to get
+                    in touch with us! We will reply back as soon as possible! As always, thank you for shopping with us!
+                </p>
+            </div>
+
+            @*
+                If something went wrong when sending the email, display the ErrorMessage
+                to the user.
+            *@
+
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="row">
+                    <p style="color: red; font-style: italic;">
+                        @Html.Raw(ViewBag.ErrorMessage)
+                    </p>
+                </div>
+            }
+
+       <div class="row">
+        <div class="col-6 offset-3">
+            <div class="section-title clear">
+                <h3>RL Item Shop Contact Form</h3>
+                <span class="bar-dark"></span>
+                <span class="bar-primary"></span>
+            </div>                     
+                                    
+        <form asp-action="Contact" class="php-email-form">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                 <input asp-for="Name" class="form-control" placeholder="Name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <input asp-for="Email" class="form-control" placeholder="Email"/>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <input asp-for="Subject" class="form-control"placeholder="Subject" />
+                <span asp-validation-for="Subject" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <textarea asp-for="Message" class="form-control" placeholder="Message"></textarea>
+                <span asp-validation-for="Message" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-4 text-center">
+                <input type="submit" value="Send Message" class="btn btn-primary" />
+            </div>
+        </form>
+       </div>
+    </div>
+    </section><!-- End Contact Section -->
+
+
+</main><!-- End #main -->
+@*@section Scripts {
+
+<!-- jQuery Library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}*@

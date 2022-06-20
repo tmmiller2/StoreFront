@@ -4,14 +4,17 @@
     ViewData["Title"] = "Orders";
 }
 
-<h1>@ViewData["Title"]</h1>
+<section class="product_section layout_padding">
+    <h1 class="text-center font-weight-bold">@ViewData["Title"]</h1>
 
+    <p align="center">
 @if (User.IsInRole("Admin"))
 {
     <span>
         <a asp-action="Create">Create New</a>
     </span>
 }
+</p>
 
 <table class="table">
     <thead>
@@ -68,3 +71,4 @@
         }
     </tbody>
 </table>
+</section>

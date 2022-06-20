@@ -9,6 +9,7 @@ using StoreFront.DATA.EF.Models;
 using Microsoft.AspNetCore.Authorization;//added to authorize users to admin role
 using System.Drawing;
 using StoreFront.UI.MVC.Utilities;
+using X.PagedList;
 
 namespace StoreFront.UI.MVC.Controllers
 {
@@ -23,6 +24,84 @@ namespace StoreFront.UI.MVC.Controllers
             _webHostEnvironment = webHostEnvironment;//added
         }
 
+        #region Filter/Paging Steps
+        //---- SEARCH TEXTBOX ----//
+        //1) Create form in the view (for the SEARCH portion, only need 1 textbox and a submit button - <select> will be added later)
+        //2) Update controller Action ([A] add param, [B]add search filter logic)
+
+        //---- CATEGORY DDL ----//
+        //3) Create ViewData[] object in Controller action (this sends DDL list to the View)
+        //4) Add <select> inside of <form>
+        //5) Update Controller Action ([A] add param, [B] add category filter logic)
+
+        //---- PAGED LIST ----//
+        //6) Install package for X.PagedList.Mvc.Core
+        //      - Open Package Manager Console -> select the UI Project -> install-package x.pagedlist.mvc.core
+        //7) Add using statements and update model declaration in the View
+        //8) Add param to Controller Action
+        //9) Add page size variable in Action
+        //10) Update return statement in Controller Action
+        //11) Add Counter in View
+
+        // 12) Create a new CSS file in wwwroot/css named 'PagedList.css'
+        //      - NOTE: may need to go to the package's NuGet page and copy the CSS directly OR copy from an existing project :)
+        //      - X.PagedList CSS file link (go here to copy the code): https://github.com/dncuug/X.PagedList/blob/master/examples/X.PagedList.Mvc.Example.Core/wwwroot/css/PagedList.css
+        // 13) Add a <link> to the _Layout referencing 'PagedList.css'
+        #endregion
+
+        //Filter Step 2                                   2.A         CATEGORY DDL - STEP 5.A    PagedList - Step 8
+        public async Task<IActionResult> TiledProducts(string searchTerm, int categoryId = 0, int page = 1)
+        {
+            // PagedList - Step 9
+            int pageSize = 6;
+
+            // Category DDL - Step 3
+            //Create a ViewData object to send a list of Categories to the View
+            //Note: we copied this from the existing functionality in Products.Create()
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName");
+            ViewBag.Category = 0;//added to track previously selected category
+
+
+            var products = _context.Products
+                .Include(p => p.Category).Include(p => p.OrderProducts).ToList();
+
+            //Category DDL - Step 5.B
+            #region Optional Category Filter
+            if (categoryId != 0)
+            {
+                products = products.Where(p => p.CategoryId == categoryId).ToList();
+
+                //Recreate the DDL so the current category is still selected
+                ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", categoryId);
+                ViewBag.Category = categoryId;
+            }
+            #endregion
+
+            //Filter - Step 2.B
+            #region Optional Search Filter
+            if (!String.IsNullOrEmpty(searchTerm))
+            {
+                products = products.Where(p => p.ProductName.ToLower().Contains(searchTerm.ToLower())
+                            || p.ProductDescription.ToLower().Contains(searchTerm.ToLower())
+                            || p.Category.CategoryName.ToLower().Contains(searchTerm.ToLower())
+                )
+                    .ToList();
+
+                ViewBag.NbrResults = products.Count;
+                ViewBag.SearchTerm = searchTerm;
+            }
+            else
+            {
+                ViewBag.NbrResults = null;
+                ViewBag.searchTerm = null;
+            }
+            #endregion
+            //PagedList - Step 10
+            //return View(products);
+            //ToPagedList() requires a using statement in the controller -- using X.PagedList;
+            return View(products.ToPagedList(page, pageSize));
+        }
+
         // GET: Products
         [AllowAnonymous]
         public async Task<IActionResult> Index()
@@ -31,12 +110,12 @@ namespace StoreFront.UI.MVC.Controllers
             return View(await products.ToListAsync());
         }
 
-        public async Task<IActionResult> TiledProducts()
-        {
-            var products = _context.Products
-             .Include(p => p.Category).Include(p => p.OrderProducts);
-            return View(await products.ToListAsync());
-        }
+        //public async Task<IActionResult> TiledProducts()
+        //{
+        //    var products = _context.Products
+        //     .Include(p => p.Category).Include(p => p.OrderProducts);
+        //    return View(await products.ToListAsync());
+        //}
 
 
         // GET: Products/Details/5

@@ -1,108 +1,136 @@
 ﻿@model IEnumerable<StoreFront.DATA.EF.Models.Product>
 
 @{
-    ViewData["Title"] = "Shop Products";
+    ViewData["Title"] = "Shop Items";
 }
-<section class="product_section layout_padding">
-<h1 class="text-center font-weight-bold">Items</h1>
 
-<p align="center">
+@*
+    Steps to Implement Datatables (for client-side searh, filter, & page)
+    1) (_Layout) add the <script> for jQuery.js -- ONLY if it doesn't already exist
+    2) (_Layout) add the <script> for plugin.js (found on the plugin's website - either available from CDN or file download)
+    3) (_Layout) add the <link> for plugin.css (if required - some plugins do not require any CSS)
+    4) (Index) add/modify your HTML to fit the requirements of the plugin
+    - Here, we use Datatables with the default scaffolded <table> from EF - we don't need to make any adjustments
+    to implement the basic datatables functionality
+    5) (Index) call the plugin function from @section Scripts { }
+    6) (optional - CSS or Plugin Function) Customize the plugin - update styles, modifying the default implementation
+*@
+<section class="product_section layout_padding">
+    <div class="container">
+            <h1 class="text-center font-weight-bold">@ViewData["Title"]</h1>
+
+            <p align="center">
                 @if (User.IsInRole("Admin"))
                 {
+                    //The pipe delimiters (|) that were outside of the <a> tags were causing intellisense to
+                    //assume we were switching BACK to C# mode.
+                    //To make sure intellisense renders these as text and NOT c#, we can wrap everything in a <span>
                     <span>
                         <a asp-action="Create">Add New Item</a> |
                     </span>
                 }
                 <a asp-action="TiledProducts">Tile View</a>
             </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductCertified)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductQuality)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductImage)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductCertified)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductQuality)
-            </td>
-            <td>
-                @*@Html.DisplayFor(modelItem => item.ProductImage)*@
-                <img src="~/images/t_@item.ProductImage" class="img-fluid" alt="@item.ProductDescription" />
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.CategoryName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status.StatusName)
-            </td>
-                        <td>
-                            @if (User.IsInRole("Admin"))
+
+        </div>
+
+        <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProductName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProductPrice)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProductDescription)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProductCertified)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProductQuality)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProductImage)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Category)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductPrice)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductDescription)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductCertified)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductQuality)
+                    </td>
+                    <td>
+                        @*@Html.DisplayFor(modelItem => item.ProductImage)*@
+                        <img src="~/images/t_@item.ProductImage" class="img-fluid" alt="@item.ProductDescription" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Category.CategoryName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Status.StatusName)
+                    </td>
+                    <td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <span>
+                                <a asp-action="Edit" asp-route-id="@item.ProductId">Edit</a> |
+                            </span>
+                        }
+                        <a asp-action="Details" asp-route-id="@item.ProductId">Details</a>
+
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            @if (item.OrderProducts.Count() == 0)
                             {
-                                <span>
-                                    <a asp-action="Edit" asp-route-id="@item.ProductId">Edit</a> |
-                                </span>
+                                <span>|</span>
+                                <a asp-action="Delete" asp-route-id="@item.ProductId">Delete</a>
                             }
-                            <a asp-action="Details" asp-route-id="@item.ProductId">Details</a>
-
-
-                            @if (User.IsInRole("Admin"))
+                            else
                             {
-                                @if (item.OrderProducts.Count() == 0)
-                                {
-                                    <span>|</span>
-                                    <a asp-action="Delete" asp-route-id="@item.ProductId">Delete</a>
-                                }
-                                else
-                                {
-                                    <span>|</span>
-                                    <a disabled="disabled" class="text-danger text-decoration-line-through"
-                           title="Cannot delete this Gadget as it is referenced by an Order">
-                                        Delete
-                                    </a>
-                                }
+                                <span>|</span>
+                                <a disabled="disabled" class="text-danger text-decoration-line-through"
+                       title="Cannot delete this Item as it is referenced by an Order">
+                                    Delete
+                                </a>
                             }
+                        }
 
-                        </td>
-        </tr>
-}
-    </tbody>
-</table>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </section>
+
+@section Scripts{
+<script>
+    $(document).ready( function () {
+        $('.table').DataTable();
+    } );
+</script>
+}

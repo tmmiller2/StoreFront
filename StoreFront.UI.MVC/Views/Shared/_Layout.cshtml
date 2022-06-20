@@ -30,8 +30,22 @@
     <!-- responsive style -->
     <link href="~/css/responsive.css" rel="stylesheet" />
 
+    @*
+        AJAX Step 11 - Add jQuery UI CSS link
+    *@
+      <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+
+    @*
+        PagedList - Step 13
+    *@
+    <!-- PagedList styles-->
+    <link rel="stylesheet" href="~/css/PagedList.css" />
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="//cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
+
     <!-- Custom CSS -->
-    <link href="~/css/stylesheet.css" rel="stylesheet" />
+    <link href="~/css/StyleSheet.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -39,7 +53,7 @@
     <div class="hero_area">
         <!-- header section starts -->
         <header class="header_section">
-            <div class="container">
+            <div id="navColor">
                 <nav class="navbar navbar-expand-lg custom_nav-container ">
                     <a class="navbar-brand" href="@Url.Action("Index", "Home")">
                         <span>
@@ -56,14 +70,14 @@
                                 <li class="nav-item active">
                                     <a class="nav-link" href="@Url.Action("Index", "Home")">Home <span class="sr-only">(current)</span></a>
                                 </li>
-                                <li class="nav-item">
+                                @*<li class="nav-item">
                                     <a class="nav-link" href="@Url.Action("")"> About</a>
-                                </li>
+                                </li>*@
                                 <li class="nav-item">
                                     <a class="nav-link" href="@Url.Action("Index", "Products")">Shop</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Contact Us</a>
+                                    <a class="nav-link" href="@Url.Action("Contact", "StronglyTypedData")">Contact Us</a>
                                 </li>
                             </ul>
 
@@ -112,11 +126,11 @@
                             <partial name="_LoginPartial" />
 
                             <a href="@Url.Action("Index", "ShoppingCart")">
-                                <img src="images/cart.png" alt="">
+                                <img src="~/images/cart.png" alt="">
                             </a>
-                            <form class="form-inline">
-                                <button class="btn  my-2 my-sm-0 nav_search-btn" type="submit"></button>
-                            </form>
+                            <a href="@Url.Action("Index", "Products")">
+                                <img src="~/images/search-icon.png" alt="">
+                            </a>
                         </div>
                     </div>
                 </nav>
@@ -131,7 +145,7 @@
     <section class="info_section layout_padding">
         <div class="container">
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="info_logo">
                         <h5>
                             Rocket League Item Shop
@@ -141,10 +155,10 @@
                         </p>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <div class="info_links pl-lg-5">
                         <h5>
-                            Useful Link
+                            Useful Links
                         </h5>
                         <ul>
                             <li class="active">
@@ -152,25 +166,25 @@
                                     Home
                                 </a>
                             </li>
-                            <li>
+                            @*<li>
                                 <a href="about.html">
                                     About
                                 </a>
-                            </li>
+                            </li>*@
                             <li>
                                 <a href="@Url.Action("Index", "Products")">
                                     Shop
                                 </a>
                             </li>
                             <li>
-                                <a href="contact.html">
+                                <a href="@Url.Action("Contact", "StronglyTypedData")">
                                     Contact Us
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-3">
+                @*<div class="col-md-3">
                     <div class="info_insta">
                         <h5>
                             Instagram
@@ -240,7 +254,7 @@
                             </p>
                         </div>
                     </div>
-                </div>
+                </div>*@
             </div>
         </div>
     </section>
@@ -261,9 +275,32 @@
     <script type="text/javascript" src="~/js/bootstrap.js"></script>
     <script type="text/javascript" src="~/js/custom.js"></script>
     <!-- Google Map -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap">
-    </script>
+    @*<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap">
+    </script>*@
     <!-- End Google Map -->
+
+    <!-- jQuery -->
+    <script src="~/js/jquery-3.4.1.min.js"></script>
+
+    <!-- DataTables -->
+    <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+    <!-- popper js -->
+    <script src="~/js/popper.min.js"></script>
+
+    @*
+        AJAX Step 10 - add <script> for jQuery.UI
+    *@
+      <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+
+
+    @*
+        AJAX Step 2 - add ajax js link in the layout
+        - we found this CDN by searching 'jquery ajax unobtrusive cdn' - you can just copy the <script> for use in other projects
+    *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js" integrity="sha512-DedNBWPF0hLGUPNbCYfj8qjlEnNE92Fqn7xd3Sscfu7ipy7Zu33unHdugqRD3c4Vj7/yLv+slqZhMls/4Oc7Zg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
     @await RenderSectionAsync("Scripts", false)
 
 </body>

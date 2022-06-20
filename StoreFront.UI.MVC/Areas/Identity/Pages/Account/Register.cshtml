@@ -4,8 +4,6 @@
     ViewData["Title"] = "Register";
 }
 
-<h1 class="text-center">@ViewData["Title"]</h1>
-
 @{
     /*
     * Steps to Extend Identity (aka Custom User Details)
@@ -20,6 +18,8 @@
     */
 }
 
+<section class="product_section layout_padding">
+<h1 class="text-center">@ViewData["Title"]</h1>
 <div class="row">
     <div class="col-md-6 offset-3">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
@@ -122,3 +122,4 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+</section>

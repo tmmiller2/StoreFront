@@ -1,0 +1,41 @@
+﻿@model StoreFront.DATA.EF.Models.Category
+
+@*
+    HERE: Updated HTML Structure
+    - add method="post" to the form
+    - add an id to the form 
+    - remove labels/add placeholders in <input> tags 
+    - change <input> for description to a <textarea>
+*@
+
+@*<h4>Category</h4>
+<hr />*@
+<div class="row">
+    <div class="col-md-6 offset-3 pt-3" >
+        <form asp-action="CategoryCreate" method="post" id="CategoryCreateForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                @*<label asp-for="CategoryName" class="control-label"></label>*@
+                <input asp-for="CategoryName" class="form-control" placeholder="Category Name" />
+                <span asp-validation-for="CategoryName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @*<label asp-for="CategoryDescription" class="control-label"></label>*@
+                <textarea asp-for="CategoryDescription" class="form-control" placeholder="Description..."></textarea>
+                <span asp-validation-for="CategoryDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@*<div>
+    <a asp-action="Index">Back to List</a>
+</div>*@
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
